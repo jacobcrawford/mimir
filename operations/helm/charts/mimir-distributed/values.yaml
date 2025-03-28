@@ -4799,6 +4799,23 @@ smoke_test:
   image:
     # repository: grafana/mimir
     # tag: 2.15.0
+  ## -- Mimir Write Endpoint to use for writing metrics to your instance. Defaults to mimir.gatewayUrl if not set.
+  write:
+  # -- Mimir Read Endpoint to use for querying metrics from your instance. Defaults to mimir.gatewayUrl if not set. Path /prometheus is appended to value.
+  read:
+  # -- Authentication settings of continuous test
+  auth:
+    # -- Type of authentication to use (tenantId, basicAuth, bearerToken)
+    type: null
+    # -- The tenant to use for tenantId or basicAuth authentication type
+    # In case of tenantId authentication, it is injected as the X-Scope-OrgID header on requests.
+    # In case of basicAuth, it is set as the username.
+    tenant: "mimir-smoke-test"
+    # -- Password for basicAuth auth (note: can be environment variable from secret attached in extraEnvFrom, e.g. $(PASSWORD))
+    # For GEM, it should contain an access token created for an access policy that allows `metrics:read` and `metrics:write` for the tenant.
+    password: null
+    # -- Bearer token for bearerToken auth (note: can be environment variable from secret attached in extraEnvFrom, e.g. $(TOKEN))
+    bearerToken: null
   # -- Controls the backoffLimit on the Kubernetes Job. The Job is marked as failed after that many retries.
   backoffLimit: 5
   # The image section has been removed as continuous test is now a module of the regular Mimir image.

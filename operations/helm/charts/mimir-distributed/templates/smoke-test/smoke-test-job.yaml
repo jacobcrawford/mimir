@@ -43,12 +43,22 @@ spec:
             - "-target=continuous-test"
             - "-activity-tracker.filepath="
             - "-tests.smoke-test"
-            - "-tests.write-endpoint={{ template "mimir.gatewayUrl" . }}"
-            - "-tests.read-endpoint={{ template "mimir.gatewayUrl" . }}/prometheus"
+            - "-tests.write-endpoint={{ default (include "mimir.gatewayUrl" .) .Values.smoke_test.write }}"
+            - "-tests.read-endpoint={{ default (include "mimir.gatewayUrl" .) .Values.smoke_test.read }}/prometheus"
             - "-tests.tenant-id={{ .Values.smoke_test.tenantId }}"
             - "-tests.write-read-series-test.num-series=1000"
             - "-tests.write-read-series-test.max-query-age=48h"
             - "-server.http-listen-port={{ include "mimir.serverHttpListenPort" . }}"
+            {{- if eq .Values.smoke_test.auth.type "tenantId" }}
+            - "-tests.tenant-id={{ .Values.smoke_test.auth.tenant }}"            
+            {{- end }}
+            {{- if eq .Values.smoke_test.auth.type "basicAuth" }}
+            - "-tests.basic-auth-password={{ .Values.smoke_test.auth.password }}"
+            - "-tests.basic-auth-user={{ .Values.smoke_test.auth.tenant }}"
+            {{- end }}
+            {{- if eq .Values.smoke_test.auth.type "bearerToken" }}
+            - "-tests.bearer-token={{ .Values.smoke_test.auth.bearerToken }}"
+            {{- end }}
             {{- range $key, $value := .Values.smoke_test.extraArgs }}
             - -{{ $key }}={{ $value }}
             {{- end }}
